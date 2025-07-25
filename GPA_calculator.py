@@ -103,22 +103,19 @@ def calculate_grade(transcript_url,excel_path,username):
     ws.cell(row=1, column=1, value=username)
     wb.save(excel_path)
     
-    message = f"CGPA 4.0 scale:\n->\t {average_grade}\n\nCGPA 10 scale:\n->\t{average_grade_10}"
-    return message, has_grade, summary
+    return has_grade, summary
 
 
 def web():
     st.header("GPA Calculator")
     st.markdown("### Hello, this is a website supporting HCMUT students calculating their GPA. I hope it can help you!")
     
-    
-    
     button_clicked = st.button('Calculate GPA!')
     if button_clicked:
         try: 
             transcript_url = "https://mybk.hcmut.edu.vn/app/sinh-vien/ket-qua-hoc-tap/bang-diem-mon-hoc"
             excel_path = "gc.xlsx"
-            df, summary = asyncio.run(calculate(transcript_url,excel_path,""))
+            df, summary = calculate_grade(transcript_url,excel_path,"")
             st.subheader("Your Academic Transcript")
             st.dataframe(df.loc[:,["Course", "Course Name", "Credit", "Grade_10", "Grade"]])
 
@@ -146,30 +143,11 @@ def web():
             
     st.markdown("Copyright © khoi.nguyenminhcs22@hcmut.edu.vn")
 
-
-async def calculate(transcript_url,excel_path,username):
-    message, df, summary = calculate_grade(transcript_url,excel_path,username)
-    await DesktopNotifier().send(
-        title="",
-        message= message,
-        sound=DEFAULT_SOUND,
-        urgency=Urgency.Critical,
-        buttons=[
-            Button(
-                title="Mark as read",
-                on_pressed=lambda: print("Marked as read"),
-            )
-        ],
-        timeout=5,
-    )
-    return df, summary
-
     
 if __name__ == "__main__":    
     required = [
     "selenium",
     "openpyxl",
-    "desktop-notifier",
     "pyperclip",
     "pandas",
     "streamlit",
@@ -183,7 +161,6 @@ if __name__ == "__main__":
     from selenium.webdriver.common.by import By
     from selenium.webdriver.common.keys import Keys
     from openpyxl import Workbook, load_workbook
-    from desktop_notifier import DesktopNotifier, Urgency, Button, DEFAULT_SOUND
     import pyperclip
     import streamlit as st
     import pandas as pd

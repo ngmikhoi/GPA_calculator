@@ -1,6 +1,5 @@
 selenium
 openpyxl
-desktop-notifier
 pandas
 pyperclip
 streamlit
