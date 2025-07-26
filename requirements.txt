@@ -1,5 +1,7 @@
-selenium
-openpyxl
 pandas
 pyperclip
 streamlit
+streamlit_javascript
+selenium
+seleniumbase
+webdriver-manager

@@ -1,11 +1,9 @@
-import os
 import time
-import asyncio
 import subprocess
 import sys
         
 
-def get_grade(transcript_url,excel_path,username):
+def get_grade_driver(transcript_url,username,password):
     driver = webdriver.Chrome()
     driver.get(transcript_url) 
     isInput = True
@@ -14,13 +12,14 @@ def get_grade(transcript_url,excel_path,username):
     while (get_url != transcript_url):
         if ("https://sso.hcmut.edu.vn/cas/login" in get_url):
             input_username = driver.find_element(By.ID, 'username')
-            input_ = driver.find_element(By.ID, 'password')
+            input_password = driver.find_element(By.ID, 'password')
             if isInput:
                 input_username.send_keys(username)
-                input_.send_keys("")
+                if username and username != "" and password and password != "":
+                    input_password.send_keys(password)
                 isInput = False
             username = input_username.get_attribute("value")
-            _ = input_.get_attribute("value")   
+            password = input_password.get_attribute("value")   
         time.sleep(1)
         get_url = driver.current_url
         
@@ -29,117 +28,131 @@ def get_grade(transcript_url,excel_path,username):
     body.send_keys(Keys.CONTROL, 'a')
     body.send_keys(Keys.CONTROL, 'c')
     driver.quit()
+    return pyperclip.paste()
 
-    clipped = pyperclip.paste()
-    clipped = clipped.split('\r\n')
-    clipped = [item.split('\t') for item in clipped]
-    
-    wb = Workbook()
-    ws = wb.active
-    for row, row_data in enumerate(clipped, start=1):
-        for col, cell_data in enumerate(row_data, start=1):
-            ws.cell(row=row, column=col, value=cell_data)
-    wb.save(excel_path)
-    
-    return username, _
-
-
-def calculate_grade(transcript_url,excel_path,username):
-    if os.path.isfile(excel_path):
-        wb = load_workbook(excel_path)
-        ws = wb.active
-        username = ws['A1'].value
-    username, _ = get_grade(transcript_url,excel_path,username)
-    
-    df = pd.read_excel(excel_path)
-    df = df.rename(columns={"Unnamed: 1": "Course", "Unnamed: 2": "Course Name", "Unnamed: 5": "Credit", "Unnamed: 3": "Grade_10", "Unnamed: 4": "Grade"})
-    map_grade_4 = {'A+': 4,'A': 4,'B+': 3.5,'B': 3,'C+': 2.5,'C': 2,'D+': 1.5,'D': 1,'F': 0}
-    df1 = df.loc[:,["Course", "Course Name", "Credit", "Grade_10", "Grade"]]
-    has_grade = df1.loc[df1["Grade"].isin(map_grade_4.keys())]
-    has_grade["Grade_4"] = list(map(lambda x: map_grade_4[x], has_grade["Grade"]))
-    has_grade = has_grade.sort_values(by=["Course","Grade_4"], ascending=True)
-    has_grade = has_grade.drop_duplicates(subset=["Course"],keep="last")
-    has_grade = has_grade.reset_index(drop=True)
-    has_grade.index += 1
-    has_grade["Credit"] = has_grade["Credit"].astype(int)
-    has_grade["Grade_10"] = has_grade["Grade_10"].astype(float)
-    
-    if os.name == 'nt':
-        os.system('cls')
+def clipped_to_df(is_driver,clipped):
+    if is_driver:
+        clipped = clipped.split('\r\n')
     else:
-        os.system('clear')
-    
-    print(has_grade.to_string())
-
-    total_credit = sum(has_grade["Credit"])
-    print(f"\nTotal credits: {total_credit}\n")
-
-    total_grade = sum(has_grade["Grade_4"] * has_grade["Credit"])
-    average_grade = total_grade / total_credit
-    print(f"total_grade: {total_grade}")
-    print(f"average_grade: {average_grade}\n")
-
-    total_grade_10 = sum(has_grade["Grade_10"] * has_grade["Credit"])
-    average_grade_10 = total_grade_10 / total_credit
-    print(f"total_grade_10: {total_grade_10}")
-    print(f"average_grade_10: {average_grade_10}\n")
-    
-    has_grade.to_excel(excel_path)
-    
-    summary = {}
-    summary["Total credits:"] = total_credit
-    summary["Total 4.0 scale:"] = total_grade
-    summary["CGPA 4.0 scale:"] = average_grade
-    summary["Total 10 scale:"] = total_grade_10
-    summary["CGPA 10 scale:"] = average_grade_10
-    
-    position = has_grade.shape[0] + 3
-    wb = load_workbook(excel_path)
-    ws = wb.active
-    for key, value in summary.items():
-        ws.cell(row=position, column=1, value=str(key))
-        ws.cell(row=position, column=2, value=value)
-        position += 1
-    ws.cell(row=1, column=1, value=username)
-    wb.save(excel_path)
-    
-    return has_grade, summary
+        clipped = clipped.split('\n')
+    clipped = [item.split('\t') for item in clipped]
+    return pd.DataFrame(clipped)
 
 
-def web():
+def calculate_grade(is_driver,clipped,transcript_url,username,password):
+    if is_driver:
+        clipped = get_grade_driver(transcript_url,username,password)
+    if "myBk/app" in clipped:        
+        df = clipped_to_df(is_driver,clipped)
+        df = df.rename(columns={df.columns[1]: "Course", df.columns[2]: "Course Name", df.columns[5]: "Credit", df.columns[3]: "Grade_10", df.columns[4]: "Grade"})
+        map_grade_4 = {'A+': 4,'A': 4,'B+': 3.5,'B': 3,'C+': 2.5,'C': 2,'D+': 1.5,'D': 1,'F': 0}
+        df = df.loc[:,["Course", "Course Name", "Credit", "Grade_10", "Grade"]]
+        
+        has_grade = df.loc[df["Grade"].isin(map_grade_4.keys())]
+        has_grade["Grade_4"] = list(map(lambda x: map_grade_4[x], has_grade["Grade"]))
+        has_grade = has_grade.sort_values(by=["Course","Grade_4"], ascending=True)
+        has_grade = has_grade.drop_duplicates(subset=["Course"],keep="last")
+        has_grade = has_grade.reset_index(drop=True)
+        has_grade.index += 1
+        has_grade["Credit"] = has_grade["Credit"].astype(int)
+        has_grade["Grade_10"] = has_grade["Grade_10"].astype(float)
+        
+        total_credit = sum(has_grade["Credit"])
+
+        total_grade = sum(has_grade["Grade_4"] * has_grade["Credit"])
+        average_grade = total_grade / total_credit if total_credit else 0
+
+        total_grade_10 = sum(has_grade["Grade_10"] * has_grade["Credit"])
+        average_grade_10 = total_grade_10 / total_credit if total_credit else 0
+        
+        summary = {}
+        summary["Total credits:"] = total_credit
+        summary["Total 4.0 scale:"] = total_grade
+        summary["CGPA 4.0 scale:"] = average_grade
+        summary["Total 10 scale:"] = total_grade_10
+        summary["CGPA 10 scale:"] = average_grade_10
+        return has_grade, summary
+    return None, None
+
+def show_grade(has_grade,summary):
+    tab1, tab2, tab3 = st.tabs(["Only GPA","Detailed Transcript","Both"])
+        
+    with tab1:
+        st.subheader("Overall Performance")
+        col1, col2, col3, col4 = st.columns([0.2, 0.3, 0.3, 0.2])
+        with col1:
+            st.markdown(f"""
+                {list(summary.keys())[0]} {list(summary.values())[0]}       
+            """ )
+        with col2:
+            st.markdown(f"""
+                {list(summary.keys())[1]} {round(list(summary.values())[1],5)}\n
+                {list(summary.keys())[2]} {round(list(summary.values())[2],5)}     
+            """ )
+        with col3:
+            st.markdown(f"""
+                {list(summary.keys())[3]} {round(list(summary.values())[3],5)}\n
+                {list(summary.keys())[4]} {round(list(summary.values())[4],5)}    
+            """ )
+
+    with tab2:
+        st.subheader("Academic Transcript")
+        st.dataframe(has_grade.loc[:,["Course", "Course Name", "Credit", "Grade_10", "Grade"]])
+        
+    with tab3:
+        st.subheader("Academic Transcript")
+        st.dataframe(has_grade.loc[:,["Course", "Course Name", "Credit", "Grade_10", "Grade"]])
+        
+        st.subheader("Overall Performance")
+        col1, col2, col3, col4 = st.columns([0.2, 0.3, 0.3, 0.2])
+        with col1:
+            st.markdown(f"""
+                {list(summary.keys())[0]} {list(summary.values())[0]}       
+            """ )
+        with col2:
+            st.markdown(f"""
+                {list(summary.keys())[1]} {round(list(summary.values())[1],5)}\n
+                {list(summary.keys())[2]} {round(list(summary.values())[2],5)}     
+            """ )
+        with col3:
+            st.markdown(f"""
+                {list(summary.keys())[3]} {round(list(summary.values())[3],5)}\n
+                {list(summary.keys())[4]} {round(list(summary.values())[4],5)}    
+            """ )
+
+def web(): 
     st.header("GPA Calculator")
     st.markdown("### Hello, this is a website supporting HCMUT students calculating their GPA. I hope it can help you!")
+    transcript_url = "https://mybk.hcmut.edu.vn/app/sinh-vien/ket-qua-hoc-tap/bang-diem-mon-hoc"
+    st.divider()
     
-    button_clicked = st.button('Calculate GPA!')
-    if button_clicked:
-        try: 
-            transcript_url = "https://mybk.hcmut.edu.vn/app/sinh-vien/ket-qua-hoc-tap/bang-diem-mon-hoc"
-            excel_path = "gc.xlsx"
-            df, summary = calculate_grade(transcript_url,excel_path,"")
-            st.subheader("Your Academic Transcript")
-            st.dataframe(df.loc[:,["Course", "Course Name", "Credit", "Grade_10", "Grade"]])
+    st.link_button("Go to Academic Transcript page", transcript_url)
+    with st.form("Academic Transcript to GPA"):
+        st.markdown("""
+            <h5 style='text-align: center;'><br></br>
+            Let go to your Academic Transcript page<br></br>
+            Ctrl + A &nbsp; and &nbsp; Ctrl + C &nbsp; to copy all content<br></br>
+            Ctrl + V &nbsp; to paste it into below input<br></br></h5>"""
+        , unsafe_allow_html=True)
+        
+        clipped = st.text_area("")
+        submitted = st.form_submit_button("Calculate GPA!")
+        if submitted:
+            has_grade, summary = calculate_grade(False,clipped,None,None,None)
+            if has_grade is not None:                
+                show_grade(has_grade,summary)
 
-            st.markdown("""
-                - This is your overall performance:
-            """)
-
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                st.markdown(f"""
-                    {list(summary.keys())[0]} {list(summary.values())[0]}       
-                """ )
-            with col2:
-                st.markdown(f"""
-                    {list(summary.keys())[1]} {list(summary.values())[1]}\n
-                    {list(summary.keys())[3]} {list(summary.values())[3]}     
-                """ )
-            with col3:
-                st.markdown(f"""
-                    {list(summary.keys())[2]} {round(list(summary.values())[2],5)}\n
-                    {list(summary.keys())[4]} {round(list(summary.values())[4],5)}     
-                """ )
-        except KeyError:
-            pass
+    st.divider()
+    
+    url = st_javascript("await fetch('').then(r => window.parent.location.href)")
+    if (url == "http://localhost:8501/"):
+        username = st.text_input("Username")
+        password = st.text_input("Password")
+        button_clicked = st.button("Calculate GPA!")
+        if button_clicked:
+            has_grade, summary = calculate_grade(True,None,transcript_url,username,password)
+            if has_grade is not None:                
+                show_grade(has_grade,summary)
         
     ft = """
     <style>
@@ -194,18 +207,20 @@ if __name__ == "__main__":
     "pyperclip",
     "pandas",
     "streamlit",
+    "streamlit_javascript",
     ]
     for package in required:
         try:
             __import__(package.replace("-", "_"))
         except ImportError:
             subprocess.run([sys.executable, "-m", "pip", "install", package])
-    from selenium import webdriver
-    from selenium.webdriver.common.by import By
-    from selenium.webdriver.common.keys import Keys
-    from openpyxl import Workbook, load_workbook
     import pyperclip
     import streamlit as st
     import pandas as pd
-    print("All required packages installed.")  
+    from selenium import webdriver
+    from selenium.webdriver.common.by import By
+    from selenium.webdriver.common.keys import Keys
+    from streamlit_javascript import st_javascript
+    
     web()
+    
