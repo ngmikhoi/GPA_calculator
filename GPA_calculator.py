@@ -1,6 +1,7 @@
-import time
 import subprocess
+import time
 import sys
+
         
 
 def get_grade_driver(transcript_url,username,password):
@@ -74,54 +75,47 @@ def calculate_grade(is_driver,clipped,transcript_url,username,password):
         return has_grade, summary
     return None, None
 
+
+def overall_performance(summary):
+    st.subheader("Overall Performance")
+    col1, col2, col3, col4 = st.columns([0.2, 0.3, 0.3, 0.2])
+    with col1:
+        st.markdown(f"""
+            {list(summary.keys())[0]} {list(summary.values())[0]}       
+        """ )
+    with col2:
+        st.markdown(f"""
+            {list(summary.keys())[1]} {round(list(summary.values())[1],7)}\n
+            {list(summary.keys())[2]} {round(list(summary.values())[2],7)}     
+        """ )
+    with col3:
+        st.markdown(f"""
+            {list(summary.keys())[3]} {round(list(summary.values())[3],7)}\n
+            {list(summary.keys())[4]} {round(list(summary.values())[4],7)}    
+        """ )
+
+
+def academic_transcript(has_grade):
+    st.subheader("Academic Transcript")
+    st.dataframe(has_grade.loc[:,["Course", "Course Name", "Credit", "Grade_10", "Grade"]])
+
+
 def show_grade(has_grade,summary):
     tab1, tab2, tab3 = st.tabs(["Only GPA","Detailed Transcript","Both"])
         
     with tab1:
-        st.subheader("Overall Performance")
-        col1, col2, col3, col4 = st.columns([0.2, 0.3, 0.3, 0.2])
-        with col1:
-            st.markdown(f"""
-                {list(summary.keys())[0]} {list(summary.values())[0]}       
-            """ )
-        with col2:
-            st.markdown(f"""
-                {list(summary.keys())[1]} {round(list(summary.values())[1],5)}\n
-                {list(summary.keys())[2]} {round(list(summary.values())[2],5)}     
-            """ )
-        with col3:
-            st.markdown(f"""
-                {list(summary.keys())[3]} {round(list(summary.values())[3],5)}\n
-                {list(summary.keys())[4]} {round(list(summary.values())[4],5)}    
-            """ )
+        overall_performance(summary)
 
     with tab2:
-        st.subheader("Academic Transcript")
-        st.dataframe(has_grade.loc[:,["Course", "Course Name", "Credit", "Grade_10", "Grade"]])
+        academic_transcript(has_grade)
         
     with tab3:
-        st.subheader("Academic Transcript")
-        st.dataframe(has_grade.loc[:,["Course", "Course Name", "Credit", "Grade_10", "Grade"]])
-        
-        st.subheader("Overall Performance")
-        col1, col2, col3, col4 = st.columns([0.2, 0.3, 0.3, 0.2])
-        with col1:
-            st.markdown(f"""
-                {list(summary.keys())[0]} {list(summary.values())[0]}       
-            """ )
-        with col2:
-            st.markdown(f"""
-                {list(summary.keys())[1]} {round(list(summary.values())[1],5)}\n
-                {list(summary.keys())[2]} {round(list(summary.values())[2],5)}     
-            """ )
-        with col3:
-            st.markdown(f"""
-                {list(summary.keys())[3]} {round(list(summary.values())[3],5)}\n
-                {list(summary.keys())[4]} {round(list(summary.values())[4],5)}    
-            """ )
+        academic_transcript(has_grade)
+        overall_performance(summary)
+
 
 def web(): 
-    st.header("GPA Calculator")
+    st.markdown("<h1 style='text-align: center;'>GPU Calculator</h1>", unsafe_allow_html=True)
     st.markdown("### Hello, this is a website supporting HCMUT students calculating their GPA. I hope it can help you!")
     transcript_url = "https://mybk.hcmut.edu.vn/app/sinh-vien/ket-qua-hoc-tap/bang-diem-mon-hoc"
     st.divider()
@@ -142,7 +136,6 @@ def web():
             if has_grade is not None:                
                 show_grade(has_grade,summary)
 
-    st.divider()
     
     url = st_javascript("await fetch('').then(r => window.parent.location.href)")
     if (url == "http://localhost:8501/"):
