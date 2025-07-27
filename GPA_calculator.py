@@ -46,7 +46,7 @@ def calculate_grade(is_driver,clipped,transcript_url,username,password):
     if "myBk/app" in clipped:        
         df = clipped_to_df(is_driver,clipped)
         df = df.rename(columns={df.columns[1]: "Course", df.columns[2]: "Course Name", df.columns[5]: "Credit", df.columns[3]: "Grade_10", df.columns[4]: "Grade"})
-        map_grade_4 = {'A+': 4,'A': 4,'B+': 3.5,'B': 3,'C+': 2.5,'C': 2,'D+': 1.5,'D': 1,'F': 0}
+        map_grade_4 = {'A+': 4,'A': 4,'B+': 3.5,'B': 3,'C+': 2.5,'C': 2,'D+': 1.5,'D': 1}
         df = df.loc[:,["Course", "Course Name", "Credit", "Grade_10", "Grade"]]
         
         has_grade = df.loc[df["Grade"].isin(map_grade_4.keys())]
