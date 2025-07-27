@@ -58,6 +58,11 @@ def calculate_grade(is_driver,clipped,transcript_url,username,password):
         has_grade["Credit"] = has_grade["Credit"].astype(int)
         has_grade["Grade_10"] = has_grade["Grade_10"].astype(float)
         
+        map_grade_free = {"12": "MT", "21": "DT"}
+        grade_free = df.loc[df["Grade_10"].isin(map_grade_free.keys())]
+        grade_free["Credit"] = grade_free["Credit"].astype(int)
+        
+        free_credit = sum(grade_free["Credit"])
         total_credit = sum(has_grade["Credit"])
 
         total_grade = sum(has_grade["Grade_4"] * has_grade["Credit"])
@@ -67,30 +72,28 @@ def calculate_grade(is_driver,clipped,transcript_url,username,password):
         average_grade_10 = total_grade_10 / total_credit if total_credit else 0
         
         summary = {}
-        summary["Total credits:"] = total_credit
-        summary["Total 4.0 scale:"] = total_grade
-        summary["CGPA 4.0 scale:"] = average_grade
-        summary["Total 10 scale:"] = total_grade_10
-        summary["CGPA 10 scale:"] = average_grade_10
+        summary["Total credits:"] = total_credit + free_credit
+        summary["Total grade 4:"] = total_grade
+        summary["GPA scale of 4:"] = average_grade
+        summary["Total grade 10:"] = total_grade_10
+        summary["GPA scale of 10:"] = average_grade_10
         return has_grade, summary
     return None, None
 
 
 def overall_performance(summary):
     st.subheader("Overall Performance")
-    col1, col2, col3, col4 = st.columns([0.2, 0.3, 0.3, 0.2])
+    col1, col2, col3= st.columns(3)
     with col1:
         st.markdown(f"""
             {list(summary.keys())[0]} {list(summary.values())[0]}       
         """ )
     with col2:
         st.markdown(f"""
-            {list(summary.keys())[1]} {round(list(summary.values())[1],7)}\n
             {list(summary.keys())[2]} {round(list(summary.values())[2],7)}     
         """ )
     with col3:
         st.markdown(f"""
-            {list(summary.keys())[3]} {round(list(summary.values())[3],7)}\n
             {list(summary.keys())[4]} {round(list(summary.values())[4],7)}    
         """ )
 
