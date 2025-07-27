@@ -1,24 +1,23 @@
 import subprocess
 import time
 import sys
-
         
-
-def get_grade_driver(transcript_url,username,password):
+def get_grade_driver(transcript_url, username, password):
     driver = webdriver.Chrome()
-    driver.get(transcript_url) 
-    isInput = True
+    driver.get(transcript_url)
+     
+    is_input = True
     time.sleep(1)
     get_url = driver.current_url
     while (get_url != transcript_url):
         if ("https://sso.hcmut.edu.vn/cas/login" in get_url):
             input_username = driver.find_element(By.ID, 'username')
             input_password = driver.find_element(By.ID, 'password')
-            if isInput:
+            if is_input:
                 input_username.send_keys(username)
                 if username and username != "" and password and password != "":
                     input_password.send_keys(password)
-                isInput = False
+                is_input = False
             username = input_username.get_attribute("value")
             password = input_password.get_attribute("value")   
         time.sleep(1)
@@ -31,7 +30,8 @@ def get_grade_driver(transcript_url,username,password):
     driver.quit()
     return pyperclip.paste()
 
-def clipped_to_df(is_driver,clipped):
+
+def clipped_to_df(is_driver, clipped):
     if is_driver:
         clipped = clipped.split('\r\n')
     else:
@@ -40,19 +40,19 @@ def clipped_to_df(is_driver,clipped):
     return pd.DataFrame(clipped)
 
 
-def calculate_grade(is_driver,clipped,transcript_url,username,password):
+def calculate_grade(is_driver, clipped, transcript_url, username, password):
     if is_driver:
-        clipped = get_grade_driver(transcript_url,username,password)
+        clipped = get_grade_driver(transcript_url, username, password)
     if "myBk/app" in clipped:        
-        df = clipped_to_df(is_driver,clipped)
+        df = clipped_to_df(is_driver, clipped)
         df = df.rename(columns={df.columns[1]: "Course", df.columns[2]: "Course Name", df.columns[5]: "Credit", df.columns[3]: "Grade_10", df.columns[4]: "Grade"})
-        map_grade_4 = {'A+': 4,'A': 4,'B+': 3.5,'B': 3,'C+': 2.5,'C': 2,'D+': 1.5,'D': 1}
-        df = df.loc[:,["Course", "Course Name", "Credit", "Grade_10", "Grade"]]
+        map_grade_4 = {'A+': 4, 'A': 4, 'B+': 3.5, 'B': 3, 'C+': 2.5, 'C': 2, 'D+': 1.5, 'D': 1}
+        df = df.loc[:, ["Course", "Course Name", "Credit", "Grade_10", "Grade"]]
         
         has_grade = df.loc[df["Grade"].isin(map_grade_4.keys())]
         has_grade["Grade_4"] = list(map(lambda x: map_grade_4[x], has_grade["Grade"]))
-        has_grade = has_grade.sort_values(by=["Course","Grade_4"], ascending=True)
-        has_grade = has_grade.drop_duplicates(subset=["Course"],keep="last")
+        has_grade = has_grade.sort_values(by=["Course", "Grade_4"], ascending=True)
+        has_grade = has_grade.drop_duplicates(subset=["Course"], keep="last")
         has_grade = has_grade.reset_index(drop=True)
         has_grade.index += 1
         has_grade["Credit"] = has_grade["Credit"].astype(int)
@@ -90,21 +90,21 @@ def overall_performance(summary):
         """ )
     with col2:
         st.markdown(f"""
-            {list(summary.keys())[2]} {round(list(summary.values())[2],7)}     
+            {list(summary.keys())[2]} {round(list(summary.values())[2], 7)}     
         """ )
     with col3:
         st.markdown(f"""
-            {list(summary.keys())[4]} {round(list(summary.values())[4],7)}    
+            {list(summary.keys())[4]} {round(list(summary.values())[4], 7)}    
         """ )
 
 
 def academic_transcript(has_grade):
     st.subheader("Academic Transcript")
-    st.dataframe(has_grade.loc[:,["Course", "Course Name", "Credit", "Grade_10", "Grade"]])
+    st.dataframe(has_grade.loc[:, ["Course", "Course Name", "Credit", "Grade_10", "Grade"]])
 
 
-def show_grade(has_grade,summary):
-    tab1, tab2, tab3 = st.tabs(["Only GPA","Detailed Transcript","Both"])
+def show_grade(has_grade, summary):
+    tab1, tab2, tab3 = st.tabs(["Only GPA", "Detailed Transcript", "Both"])
         
     with tab1:
         overall_performance(summary)
@@ -120,10 +120,11 @@ def show_grade(has_grade,summary):
 def web(): 
     st.markdown("<h1 style='text-align: center;'>GPU Calculator</h1>", unsafe_allow_html=True)
     st.markdown("### Hello, this is a website supporting HCMUT students calculating their GPA. I hope it can help you!")
-    transcript_url = "https://mybk.hcmut.edu.vn/app/sinh-vien/ket-qua-hoc-tap/bang-diem-mon-hoc"
     st.divider()
     
+    transcript_url = "https://mybk.hcmut.edu.vn/app/sinh-vien/ket-qua-hoc-tap/bang-diem-mon-hoc"
     st.link_button("Go to Academic Transcript page", transcript_url)
+    
     with st.form("Academic Transcript to GPA"):
         st.markdown("""
             <h5 style='text-align: center;'><br></br>
@@ -135,10 +136,9 @@ def web():
         clipped = st.text_area("")
         submitted = st.form_submit_button("Calculate GPA!")
         if submitted:
-            has_grade, summary = calculate_grade(False,clipped,None,None,None)
+            has_grade, summary = calculate_grade(False, clipped, None, None, None)
             if has_grade is not None:                
-                show_grade(has_grade,summary)
-
+                show_grade(has_grade, summary)
     
     url = st_javascript("await fetch('').then(r => window.parent.location.href)")
     if (url == "http://localhost:8501/"):
@@ -146,9 +146,9 @@ def web():
         password = st.text_input("Password")
         button_clicked = st.button("Calculate GPA!")
         if button_clicked:
-            has_grade, summary = calculate_grade(True,None,transcript_url,username,password)
+            has_grade, summary = calculate_grade(True, None, transcript_url, username, password)
             if has_grade is not None:                
-                show_grade(has_grade,summary)
+                show_grade(has_grade, summary)
         
     ft = """
     <style>
@@ -198,18 +198,19 @@ def web():
     
 if __name__ == "__main__":    
     required = [
-    "selenium",
-    "openpyxl",
-    "pyperclip",
-    "pandas",
-    "streamlit",
-    "streamlit_javascript",
+    "selenium", 
+    "pyperclip", 
+    "pandas", 
+    "streamlit", 
+    "streamlit_javascript", 
     ]
+    
     for package in required:
         try:
             __import__(package.replace("-", "_"))
         except ImportError:
             subprocess.run([sys.executable, "-m", "pip", "install", package])
+            
     import pyperclip
     import streamlit as st
     import pandas as pd
@@ -219,4 +220,3 @@ if __name__ == "__main__":
     from streamlit_javascript import st_javascript
     
     web()
-    
