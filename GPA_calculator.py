@@ -118,8 +118,8 @@ def show_grade(has_grade, summary):
 
 
 def web():
-    st.set_page_config(page_title="HCMUT GPA Calculator", layout="centered")
-    st.markdown("<h1 style='text-align: center;'>HCMUT GPA Calculator</h1>", unsafe_allow_html=True)
+    st.set_page_config(page_title="GPA Calculator HCMUT", layout="centered")
+    st.markdown("<h1 style='text-align: center;'>GPA Calculator HCMUT</h1>", unsafe_allow_html=True)
     st.markdown("### Hello, this is a website supporting HCMUT students calculating their GPA. I hope it can help you!")
     st.divider()
     
