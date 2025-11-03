@@ -117,8 +117,9 @@ def show_grade(has_grade, summary):
         overall_performance(summary)
 
 
-def web(): 
-    st.markdown("<h1 style='text-align: center;'>GPU Calculator</h1>", unsafe_allow_html=True)
+def web():
+    st.set_page_config(page_title="HCMUT GPA Calculator", layout="centered")
+    st.markdown("<h1 style='text-align: center;'>HCMUT GPA Calculator</h1>", unsafe_allow_html=True)
     st.markdown("### Hello, this is a website supporting HCMUT students calculating their GPA. I hope it can help you!")
     st.divider()
     
