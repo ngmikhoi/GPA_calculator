@@ -1,6 +1,8 @@
-python_version < "3.13"
 pandas
 pyperclip
 streamlit
 streamlit_javascript
 selenium
+seleniumbase
+webdriver-manager
+requires-python = "==3.12.*"
