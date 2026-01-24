@@ -1,5 +1,7 @@
 pandas
 pyperclip
-streamlit
 streamlit_javascript
 selenium
+seleniumbase
+webdriver-manager
+altair<5
