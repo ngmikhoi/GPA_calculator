@@ -5,3 +5,4 @@ selenium
 seleniumbase
 webdriver-manager
 altair<5
+streamlit>=1.35.0
