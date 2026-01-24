@@ -1,8 +1,6 @@
+python_version < "3.13"
 pandas
 pyperclip
 streamlit
 streamlit_javascript
 selenium
-seleniumbase
-webdriver-manager
-altair<5
