@@ -155,6 +155,7 @@ def academic_transcript(has_grade):
 def semester_performance(semester_grade_list):
     st.subheader("Semester Performance")
     for i in range(len(semester_grade_list)):
+        st.divider()
         st.dataframe(semester_grade_list[i]["Df"].loc[:, ["Course", "Course Name", "Credit", "Grade_10", "Grade_4", "Grade"]])
         col1, col2, col3= st.columns(3)
         with col1:
@@ -169,21 +170,18 @@ def semester_performance(semester_grade_list):
             st.markdown(f"""
                 GPA scale of 10: {round(semester_grade_list[i]['GPA scale of 10'], 7)}    
             """ )
-        st.divider()
+        
 
 
 def show_grade(has_grade, summary, semester_grade_list):
-    tab1, tab2, tab3 = st.tabs(["Cumulative GPA", "Semester GPA", "Overall Transcript"])
+    tab1, tab2 = st.tabs(["Cumulative GPA", "Semester GPA"])
         
     with tab1:
         overall_performance(summary)
+        academic_transcript(has_grade)
         
     with tab2:
         semester_performance(semester_grade_list)
-        
-    with tab3:
-        academic_transcript(has_grade)
-        overall_performance(summary)
 
 
 def web():
