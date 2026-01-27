@@ -187,8 +187,7 @@ def show_grade(has_grade, summary, semester_grade_list):
 def web():
     st.set_page_config(page_title="GPA Calculator HCMUT", page_icon="🌠", layout="wide")
     st.markdown("<h1 style='text-align: center;'>GPA Calculator HCMUT</h1>", unsafe_allow_html=True)
-    st.markdown("### Hello, this is a website supporting HCMUT students calculating their GPA. I hope it can help you!")
-    st.divider()
+    st.markdown("<h3 style='text-align: center;'>Hello, this is a website supporting HCMUT students calculating their GPA. I hope it can help you!</h3>", unsafe_allow_html=True)
     
     transcript_url = "https://mybk.hcmut.edu.vn/app/sinh-vien/ket-qua-hoc-tap/bang-diem-mon-hoc"
     st.link_button("Go to Academic Transcript page", transcript_url)
@@ -198,7 +197,7 @@ def web():
             <h5 style='text-align: center;'><br></br>
             Let go to your Academic Transcript page<br></br>
             Ctrl + A &nbsp; and &nbsp; Ctrl + C &nbsp; to copy all content<br></br>
-            Ctrl + V &nbsp; to paste it into below input<br></br></h5>"""
+            Ctrl + V &nbsp; to paste it into below input</h5>"""
         , unsafe_allow_html=True)
         
         clipped = st.text_area("")
