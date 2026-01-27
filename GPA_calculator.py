@@ -1,6 +1,7 @@
 import subprocess
 import time
 import sys
+
         
 def get_grade_driver(transcript_url, username, password):
     driver = webdriver.Chrome()
@@ -46,7 +47,7 @@ def clipped_to_semester_df(is_driver, clipped):
 
     df_semester_list = []
 
-    for i in range(1, len(clipped_semester_list)):
+    for i in range(len(clipped_semester_list) -1, 0, -1):
         clipped_semester = clipped_semester_list[i]
         if is_driver:
             clipped_semester = clipped_semester.split('\r\n')
@@ -62,9 +63,16 @@ def calculate_grade(is_driver, clipped, transcript_url, username, password):
         clipped = get_grade_driver(transcript_url, username, password)
         
     semester_grade_list = []
-
+    
+    cumulative_df = None
+    
     if "Tích lũy học kỳ" in clipped:
         df_semester_list = clipped_to_semester_df(is_driver, clipped)
+        
+        free_credit = 0
+        
+        if "/miễn điểm" in clipped:
+            free_credit = int(clipped.split("/miễn điểm\t")[1].split("\t")[0].strip())  
         
         for df in df_semester_list:
             df = df.rename(columns={df.columns[1]: "Course", df.columns[2]: "Course Name", df.columns[5]: "Credit", df.columns[3]: "Grade_10", df.columns[4]: "Grade"})
@@ -85,11 +93,32 @@ def calculate_grade(is_driver, clipped, transcript_url, username, password):
             total_grade_10 = sum(has_grade["Grade_10"] * has_grade["Credit"])
             average_grade_10 = total_grade_10 / total_credit if total_credit else 0
 
+            if cumulative_df is None:
+                cumulative_df = has_grade
+            else:
+                cumulative_df = pd.concat([cumulative_df, has_grade], ignore_index=True)
+                
+            if cumulative_df is not None:
+                cumulative_df = cumulative_df.sort_values(by=["Course", "Grade_4"], ascending=True)
+                cumulative_df = cumulative_df.drop_duplicates(subset=["Course"], keep="last")
+                cumulative_df = cumulative_df[cumulative_df["Grade_4"] > 0]
+                cumulative_df = cumulative_df.reset_index(drop=True)
+                cumulative_df.index += 1
+
+                cumulative_total_credit = sum(cumulative_df["Credit"])
+                cumulative_total_grade = sum(cumulative_df["Grade_4"] * cumulative_df["Credit"])
+                cumulative_average_grade = cumulative_total_grade / cumulative_total_credit if cumulative_total_credit else 0
+                cumulative_total_grade_10 = sum(cumulative_df["Grade_10"] * cumulative_df["Credit"])
+                cumulative_average_grade_10 = cumulative_total_grade_10 / cumulative_total_credit if cumulative_total_credit else 0
+            
             semester_grade_list.append({
                 "Df": has_grade,
                 "Credit": total_credit,
                 "GPA scale of 4": average_grade,
-                "GPA scale of 10": average_grade_10
+                "GPA scale of 10": average_grade_10,
+                "Cumulative Credit": cumulative_total_credit + free_credit,
+                "Cumulative GPA scale of 4": cumulative_average_grade,
+                "Cumulative GPA scale of 10": cumulative_average_grade_10,
             })
 
     if "myBk/app" in clipped:
@@ -127,7 +156,8 @@ def calculate_grade(is_driver, clipped, transcript_url, username, password):
         summary["GPA scale of 4:"] = average_grade
         summary["Total grade 10:"] = total_grade_10
         summary["GPA scale of 10:"] = average_grade_10
-        return has_grade, summary, semester_grade_list
+        return has_grade, summary, semester_grade_list, free_credit
+    
     return None, None
 
 
@@ -150,36 +180,50 @@ def overall_performance(summary):
 
 def academic_transcript(has_grade):
     st.subheader("Academic Transcript")
-    st.dataframe(has_grade.loc[:, ["Course", "Course Name", "Credit", "Grade_10", "Grade_4", "Grade"]])
+    st.dataframe(has_grade.loc[:, ["Course", "Course Name", "Grade", "Grade_4", "Grade_10", "Credit"]])
     
-def semester_performance(semester_grade_list):
+    
+def semester_performance(semester_grade_list, free_credit):
     st.subheader("Semester Performance")
+    st.markdown(f"Free Credit: {free_credit}")
+    st.divider()
+    
     for i in range(len(semester_grade_list)):
-        st.dataframe(semester_grade_list[i]["Df"].loc[:, ["Course", "Course Name", "Credit", "Grade_10", "Grade_4", "Grade"]])
+        st.dataframe(semester_grade_list[i]["Df"].loc[:, ["Course", "Course Name", "Grade", "Grade_4", "Grade_10", "Credit"]])
         col1, col2, col3= st.columns(3)
         with col1:
             st.markdown(f"""
                 Credit: {semester_grade_list[i]['Credit']}       
             """ )
+            st.markdown(f"""
+                Cumulative Credit: {semester_grade_list[i]['Cumulative Credit']}
+            """ )
         with col2:
             st.markdown(f"""
                 GPA scale of 4: {round(semester_grade_list[i]['GPA scale of 4'], 7)}     
+            """ )
+            st.markdown(f"""
+                Cumulative GPA scale of 4: {round(semester_grade_list[i]['Cumulative GPA scale of 4'], 7)}
             """ )
         with col3:
             st.markdown(f"""
                 GPA scale of 10: {round(semester_grade_list[i]['GPA scale of 10'], 7)}    
             """ )
+            st.markdown(f"""
+                Cumulative GPA scale of 10: {round(semester_grade_list[i]['Cumulative GPA scale of 10'], 7)}
+            """ )
         st.divider()
+        
 
-def show_grade(has_grade, summary, semester_grade_list):
-    tab1, tab2 = st.tabs(["Cumulative GPA", "Semester GPA"])
+def show_grade(has_grade, summary, semester_grade_list, free_credit):
+    tab1, tab2 = st.tabs(["Overall GPA", "Semester GPA"])
         
     with tab1:
         overall_performance(summary)
         academic_transcript(has_grade)
         
     with tab2:
-        semester_performance(semester_grade_list)
+        semester_performance(semester_grade_list, free_credit)
 
 
 def web():
@@ -201,9 +245,9 @@ def web():
         clipped = st.text_area("")
         submitted = st.form_submit_button("Calculate GPA!")
         if submitted:
-            has_grade, summary, semester_grade_list = calculate_grade(False, clipped, None, None, None)
+            has_grade, summary, semester_grade_list, free_credit = calculate_grade(False, clipped, None, None, None)
             if has_grade is not None:                
-                show_grade(has_grade, summary, semester_grade_list)
+                show_grade(has_grade, summary, semester_grade_list, free_credit)
     
     url = st_javascript("await fetch('').then(r => window.parent.location.href)")
     if (url == "http://localhost:8501/"):
@@ -211,9 +255,9 @@ def web():
         password = st.text_input("Password")
         button_clicked = st.button("Calculate GPA!")
         if button_clicked:
-            has_grade, summary, semester_grade_list = calculate_grade(True, None, transcript_url, username, password)
+            has_grade, summary, semester_grade_list, free_credit = calculate_grade(True, None, transcript_url, username, password)
             if has_grade is not None:                
-                show_grade(has_grade, summary, semester_grade_list)
+                show_grade(has_grade, summary, semester_grade_list, free_credit)
             
         
     ft = """
