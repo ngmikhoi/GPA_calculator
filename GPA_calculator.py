@@ -39,11 +39,60 @@ def clipped_to_df(is_driver, clipped):
     clipped = [item.split('\t') for item in clipped]
     return pd.DataFrame(clipped)
 
+def clipped_to_semester_df(is_driver, clipped):
+    if "Tích lũy học kỳ" in clipped:
+        clipped = clipped.replace("0.0\t0\tTích lũy học kỳ", "0")
+        clipped_semester_list = clipped.split("Tích lũy học kỳ")
+
+    df_semester_list = []
+
+    for i in range(1, len(clipped_semester_list)):
+        clipped_semester = clipped_semester_list[i]
+        if is_driver:
+            clipped_semester = clipped_semester.split('\r\n')
+        else:
+            clipped_semester = clipped_semester.split('\n')
+        clipped_semester = [item.split('\t') for item in clipped_semester]
+        df_semester_list.append(pd.DataFrame(clipped_semester))
+
+    return df_semester_list
 
 def calculate_grade(is_driver, clipped, transcript_url, username, password):
     if is_driver:
         clipped = get_grade_driver(transcript_url, username, password)
-    if "myBk/app" in clipped:        
+        
+    semester_grade_list = []
+
+    if "Tích lũy học kỳ" in clipped:
+        df_semester_list = clipped_to_semester_df(is_driver, clipped)
+        
+        for df in df_semester_list:
+            df = df.rename(columns={df.columns[1]: "Course", df.columns[2]: "Course Name", df.columns[5]: "Credit", df.columns[3]: "Grade_10", df.columns[4]: "Grade"})
+            map_grade_4 = {'A+': 4, 'A': 4, 'B+': 3.5, 'B': 3, 'C+': 2.5, 'C': 2, 'D+': 1.5, 'D': 1, 'F': 0}
+            df = df.loc[:, ["Course", "Course Name", "Credit", "Grade_10", "Grade"]]
+            has_grade = df.loc[df["Grade"].isin(map_grade_4.keys())]
+            has_grade["Grade_4"] = list(map(lambda x: map_grade_4[x], has_grade["Grade"]))
+            
+            has_grade["Credit"] = has_grade["Credit"].astype(int)
+            has_grade["Grade_10"] = has_grade["Grade_10"].astype(float)
+            has_grade["Grade_4"] = has_grade["Grade_4"].astype(float)
+            
+            total_credit = sum(has_grade["Credit"])
+            
+            total_grade = sum(has_grade["Grade_4"] * has_grade["Credit"])
+            average_grade = total_grade / total_credit if total_credit else 0
+
+            total_grade_10 = sum(has_grade["Grade_10"] * has_grade["Credit"])
+            average_grade_10 = total_grade_10 / total_credit if total_credit else 0
+
+            semester_grade_list.append({
+                "Df": has_grade,
+                "Credit": total_credit,
+                "GPA scale of 4": average_grade,
+                "GPA scale of 10": average_grade_10
+            })
+
+    if "myBk/app" in clipped:
         df = clipped_to_df(is_driver, clipped)
         df = df.rename(columns={df.columns[1]: "Course", df.columns[2]: "Course Name", df.columns[5]: "Credit", df.columns[3]: "Grade_10", df.columns[4]: "Grade"})
         map_grade_4 = {'A+': 4, 'A': 4, 'B+': 3.5, 'B': 3, 'C+': 2.5, 'C': 2, 'D+': 1.5, 'D': 1}
@@ -78,7 +127,7 @@ def calculate_grade(is_driver, clipped, transcript_url, username, password):
         summary["GPA scale of 4:"] = average_grade
         summary["Total grade 10:"] = total_grade_10
         summary["GPA scale of 10:"] = average_grade_10
-        return has_grade, summary
+        return has_grade, summary, semester_grade_list
     return None, None
 
 
@@ -100,18 +149,37 @@ def overall_performance(summary):
 
 
 def academic_transcript(has_grade):
-    st.subheader("Academic Transcript")
+    st.subheader("Overall Transcript")
     st.dataframe(has_grade.loc[:, ["Course", "Course Name", "Credit", "Grade_10", "Grade_4", "Grade"]])
+    
+def semester_performance(semester_grade_list):
+    st.subheader("Semester Performance")
+    for i in range(len(semester_grade_list)):
+        st.dataframe(semester_grade_list[i]["Df"].loc[:, ["Course", "Course Name", "Credit", "Grade_10", "Grade_4", "Grade"]])
+        col1, col2, col3= st.columns(3)
+        with col1:
+            st.markdown(f"""
+                Credit: {semester_grade_list[i]['Credit']}       
+            """ )
+        with col2:
+            st.markdown(f"""
+                GPA scale of 4: {round(semester_grade_list[i]['GPA scale of 4'], 7)}     
+            """ )
+        with col3:
+            st.markdown(f"""
+                GPA scale of 10: {round(semester_grade_list[i]['GPA scale of 10'], 7)}    
+            """ )
+        st.divider()
 
 
-def show_grade(has_grade, summary):
-    tab1, tab2, tab3 = st.tabs(["Only GPA", "Detailed Transcript", "Both"])
+def show_grade(has_grade, summary, semester_grade_list):
+    tab1, tab2, tab3 = st.tabs(["Cumulative GPA", "Semester GPA", "Overall Transcript"])
         
     with tab1:
         overall_performance(summary)
-
+        
     with tab2:
-        academic_transcript(has_grade)
+        semester_performance(semester_grade_list)
         
     with tab3:
         academic_transcript(has_grade)
@@ -138,9 +206,9 @@ def web():
         clipped = st.text_area("")
         submitted = st.form_submit_button("Calculate GPA!")
         if submitted:
-            has_grade, summary = calculate_grade(False, clipped, None, None, None)
+            has_grade, summary, semester_grade_list = calculate_grade(False, clipped, None, None, None)
             if has_grade is not None:                
-                show_grade(has_grade, summary)
+                show_grade(has_grade, summary, semester_grade_list)
     
     url = st_javascript("await fetch('').then(r => window.parent.location.href)")
     if (url == "http://localhost:8501/"):
@@ -148,9 +216,10 @@ def web():
         password = st.text_input("Password")
         button_clicked = st.button("Calculate GPA!")
         if button_clicked:
-            has_grade, summary = calculate_grade(True, None, transcript_url, username, password)
+            has_grade, summary, semester_grade_list = calculate_grade(True, None, transcript_url, username, password)
             if has_grade is not None:                
-                show_grade(has_grade, summary)
+                show_grade(has_grade, summary, semester_grade_list)
+            
         
     ft = """
     <style>
