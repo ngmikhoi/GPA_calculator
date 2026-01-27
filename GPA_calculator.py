@@ -57,6 +57,7 @@ def calculate_grade(is_driver, clipped, transcript_url, username, password):
         has_grade.index += 1
         has_grade["Credit"] = has_grade["Credit"].astype(int)
         has_grade["Grade_10"] = has_grade["Grade_10"].astype(float)
+        has_grade["Grade_4"] = has_grade["Grade_4"].astype(float)
         
         map_grade_free = {"12": "MT", "21": "DT"}
         grade_free = df.loc[df["Grade_10"].isin(map_grade_free.keys())]
@@ -100,7 +101,7 @@ def overall_performance(summary):
 
 def academic_transcript(has_grade):
     st.subheader("Academic Transcript")
-    st.dataframe(has_grade.loc[:, ["Course", "Course Name", "Credit", "Grade_10", "Grade"]])
+    st.dataframe(has_grade.loc[:, ["Course", "Course Name", "Credit", "Grade_10", "Grade_4", "Grade"]])
 
 
 def show_grade(has_grade, summary):
@@ -118,7 +119,7 @@ def show_grade(has_grade, summary):
 
 
 def web():
-    st.set_page_config(page_title="GPA Calculator HCMUT", page_icon="🌠", layout="centered")
+    st.set_page_config(page_title="GPA Calculator HCMUT", page_icon="🌠", layout="wide")
     st.markdown("<h1 style='text-align: center;'>GPA Calculator HCMUT</h1>", unsafe_allow_html=True)
     st.markdown("### Hello, this is a website supporting HCMUT students calculating their GPA. I hope it can help you!")
     st.divider()
@@ -221,3 +222,4 @@ if __name__ == "__main__":
     from streamlit_javascript import st_javascript
     
     web()
+    
