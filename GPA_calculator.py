@@ -170,11 +170,11 @@ def overall_performance(summary):
         """ )
     with col2:
         st.markdown(f"""
-            {list(summary.keys())[2]} {round(list(summary.values())[2], 7)}     
+            {list(summary.keys())[2]} {round(list(summary.values())[2], 7)} ≈ {round(list(summary.values())[2], 1)}     
         """ )
     with col3:
         st.markdown(f"""
-            {list(summary.keys())[4]} {round(list(summary.values())[4], 7)}    
+            {list(summary.keys())[4]} {round(list(summary.values())[4], 7)} ≈ {round(list(summary.values())[4], 2)}    
         """ )
 
 
@@ -200,17 +200,17 @@ def semester_performance(semester_grade_list, free_credit):
             """ )
         with col2:
             st.markdown(f"""
-                GPA scale of 4: {round(semester_grade_list[i]['GPA scale of 4'], 7)}     
+                GPA scale of 4: {round(semester_grade_list[i]['GPA scale of 4'], 7)} ≈ {round(semester_grade_list[i]['GPA scale of 4'], 1)}
             """ )
             st.markdown(f"""
-                Cumulative GPA scale of 4: {round(semester_grade_list[i]['Cumulative GPA scale of 4'], 7)}
+                Cumulative GPA scale of 4: {round(semester_grade_list[i]['Cumulative GPA scale of 4'], 7)} ≈ {round(semester_grade_list[i]['Cumulative GPA scale of 4'], 1)}
             """ )
         with col3:
             st.markdown(f"""
-                GPA scale of 10: {round(semester_grade_list[i]['GPA scale of 10'], 7)}    
+                GPA scale of 10: {round(semester_grade_list[i]['GPA scale of 10'], 7)} ≈ {round(semester_grade_list[i]['GPA scale of 10'], 2)}   
             """ )
             st.markdown(f"""
-                Cumulative GPA scale of 10: {round(semester_grade_list[i]['Cumulative GPA scale of 10'], 7)}
+                Cumulative GPA scale of 10: {round(semester_grade_list[i]['Cumulative GPA scale of 10'], 7)} ≈ {round(semester_grade_list[i]['Cumulative GPA scale of 10'], 2)}
             """ )
         st.divider()
         
