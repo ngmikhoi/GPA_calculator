@@ -40,6 +40,7 @@ def clipped_to_df(is_driver, clipped):
     clipped = [item.split('\t') for item in clipped]
     return pd.DataFrame(clipped)
 
+
 def clipped_to_semester_df(is_driver, clipped):
     if "Tích lũy học kỳ" in clipped:
         clipped = clipped.replace("0.0\t0\tTích lũy học kỳ", "0")
@@ -55,8 +56,8 @@ def clipped_to_semester_df(is_driver, clipped):
             clipped_semester = clipped_semester.split('\n')
         clipped_semester = [item.split('\t') for item in clipped_semester]
         df_semester_list.append(pd.DataFrame(clipped_semester))
-
     return df_semester_list
+
 
 def calculate_grade(is_driver, clipped, transcript_url, username, password):
     if is_driver:
@@ -70,7 +71,6 @@ def calculate_grade(is_driver, clipped, transcript_url, username, password):
         df_semester_list = clipped_to_semester_df(is_driver, clipped)
         
         free_credit = 0
-        
         if "/miễn điểm" in clipped:
             free_credit = int(clipped.split("/miễn điểm\t")[1].split("\t")[0].strip())  
         
@@ -86,6 +86,7 @@ def calculate_grade(is_driver, clipped, transcript_url, username, password):
             has_grade["Grade_4"] = has_grade["Grade_4"].astype(float)
             
             total_credit = sum(has_grade["Credit"])
+            fail_credit = sum(has_grade.loc[has_grade["Grade_4"] == 0]["Credit"])
             
             total_grade = sum(has_grade["Grade_4"] * has_grade["Credit"])
             average_grade = total_grade / total_credit if total_credit else 0
@@ -113,7 +114,7 @@ def calculate_grade(is_driver, clipped, transcript_url, username, password):
             
             semester_grade_list.append({
                 "Df": has_grade,
-                "Credit": total_credit,
+                "Credit": total_credit - fail_credit,
                 "GPA scale of 4": average_grade,
                 "GPA scale of 10": average_grade_10,
                 "Cumulative Credit": cumulative_total_credit + free_credit,
@@ -157,8 +158,7 @@ def calculate_grade(is_driver, clipped, transcript_url, username, password):
         summary["Total grade 10:"] = total_grade_10
         summary["GPA scale of 10:"] = average_grade_10
         return has_grade, summary, semester_grade_list, free_credit
-    
-    return None, None
+    return None, None, None, None
 
 
 def overall_performance(summary):
@@ -229,7 +229,7 @@ def show_grade(has_grade, summary, semester_grade_list, free_credit):
 def web():
     st.set_page_config(page_title="GPA Calculator HCMUT", page_icon="🌠", layout="wide")
     st.markdown("<h1 style='text-align: center;'>GPA Calculator HCMUT</h1>", unsafe_allow_html=True)
-    st.markdown("<h3 style='text-align: center;'>Hello, this is a website supporting HCMUT students calculating their GPA. I hope it can help you!</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center;'>Hello, this is a website supporting HCMUT students calculating their GPA.</h3>", unsafe_allow_html=True)
     
     transcript_url = "https://mybk.hcmut.edu.vn/app/sinh-vien/ket-qua-hoc-tap/bang-diem-mon-hoc"
     st.link_button("Go to Academic Transcript page", transcript_url)
