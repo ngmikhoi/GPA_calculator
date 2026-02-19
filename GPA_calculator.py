@@ -125,12 +125,24 @@ def web():
                     show_grade(st.session_state.has_grade, st.session_state.summary, st.session_state.semester_grade_list, st.session_state.free_credit)
 
     st.markdown("""
-        <p style="margin: 0.5rem 0 0 0; opacity: 0.8; font-size: 0.9rem;">
-            Copyright © 2026 <a href="https://github.com/ngmikhoi" target="_blank" 
-                           style="color: #3C8DBC; text-decoration: none; font-weight: bold;">
-                ngmikhoi
-            </a>. All rights reserved.
-        </p>
+    <div style="display: flex; justify-content: space-between; align-items: center; 
+        margin-top: 3rem; bottom: 0; left: 0; right: 0;
+        opacity: 0.8; font-size: 0.9rem;">
+        <div style="text-align: left; flex: 1;">
+            <span style="font-weight: bold;">
+                Copyright © 2026 
+                <a href="https://github.com/ngmikhoi" target="_blank" 
+                    style="color: #3C8DBC; text-decoration: none;">
+                    ngmikhoi
+                </a>. 
+            </span>
+            <span> All rights reserved.</span>
+        </div>
+        <div style="text-align: right; flex: 1;">
+            <span style="font-weight: bold;">Version</span>
+            <span> 2.2.0</span>
+        </div>
+    </div>
     """, unsafe_allow_html=True)
 
 
