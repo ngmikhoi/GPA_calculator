@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from utils import convert_10_to_4
 
 
 def overall_performance(summary):
@@ -64,12 +65,14 @@ def show_grade(has_grade, summary, semester_grade_list, free_credit):
 
     with tab3:
         st.subheader("Edit Academic Transcript")
-        edited_df = st.data_editor(has_grade.loc[:, ["Course", "Course Name", "Grade_4", "Grade_10", "Credit"]], num_rows="dynamic")
+        edited_df = st.data_editor(has_grade.loc[:, ["Course", "Course Name", "Grade_10", "Credit"]], num_rows="dynamic")
         
         if st.button("Recalculate GPA", key="recalculate_overall"):
             if not edited_df.empty:
-                map_grade_4 = {'A+': 4, 'A': 4, 'B+': 3.5, 'B': 3, 'C+': 2.5, 'C': 2, 'D+': 1.5, 'D': 1, 'F': 0}
+                map_grade_4 = {'A+': 4, 'A': 4, 'B+': 3.5, 'B': 3, 'C+': 2.5, 'C': 2, 'D+': 1.5, 'D': 1}
                 
+                edited_df["Grade_4"] = edited_df["Grade_10"].apply(convert_10_to_4)
+
                 valid_grades = edited_df[edited_df["Grade_4"].isin(map_grade_4.values())]
                 
                 if not valid_grades.empty:

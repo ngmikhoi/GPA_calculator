@@ -161,3 +161,27 @@ def calculate_grade(is_driver, clipped, transcript_url, username, password):
         summary["GPA scale of 10:"] = average_grade_10
         return has_grade, summary, semester_grade_list, free_credit
     return None, None, None, None
+
+
+def convert_10_to_4(grade_10):
+    if not isinstance(grade_10, (int, float)):
+        return None
+    elif grade_10 < 0 or grade_10 > 10:
+        return None
+    elif grade_10 >= 8.5:
+        return 4
+    elif grade_10 >= 8:
+        return 3.5
+    elif grade_10 >= 7:
+        return 3
+    elif grade_10 >= 6.5:
+        return 2.5
+    elif grade_10 >= 6:
+        return 2
+    elif grade_10 >= 5:
+        return 1.5
+    elif grade_10 >= 4:
+        return 1
+    else:
+        return 0
+

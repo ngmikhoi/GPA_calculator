@@ -2,7 +2,7 @@
 
 /* Light mode styles */
 .main-header {
-    background: linear-gradient(135deg, #00897b 0%, #004d40 100%);
+    background: linear-gradient(135deg, #1488DB 0%, #032B91 100%);
     padding: 2rem;
     border-radius: 15px;
     margin-bottom: 2rem;
@@ -17,22 +17,9 @@
     border-radius: 10px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     margin: 1rem;
-    border-left: 4px solid #00897b;
+    border-left: 4px solid #1488DB;
 }
 
-.metric-card {
-    background: linear-gradient(135deg, #0097A7 0%, #00646F 100%);
-    color: white;
-    padding: 1.5rem;
-    border-radius: 10px;
-    text-align: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    transition: transform 0.3s ease;
-}
-
-.metric-card:hover {
-    transform: translateY(-5px);
-}
 
 .tab-container {
     background: white;
@@ -49,7 +36,7 @@
 }
 
 .footer {
-    background: linear-gradient(135deg, #00897b 0%, #004d40 100%);
+    background: linear-gradient(135deg, #1488DB 0%, #032B91 100%);
     color: white;
     padding: 2rem;
     border-radius: 10px;
@@ -67,17 +54,14 @@
         background: #2d3748;
         color: #e2e8f0;
         box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        border-left: 4px solid #00897b;
+        border-left: 4px solid #1488DB;
     }
     
     .feature-card h3 {
         color: #e2e8f0;
     }
     
-    .metric-card {
-        background: linear-gradient(135deg, #805ad5 0%, #d53f8c 100%);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-    }
+
     
     .tab-container {
         background: #1a202c;
@@ -117,7 +101,7 @@
     }
     
     .data-editor div[data-testid="stDataFrame"] input:focus {
-        border-color: #00897b;
+        border-color: #1488DB;
         box-shadow: 0 0 0 2px rgba(0, 137, 123, 0.2);
     }
     
@@ -136,7 +120,7 @@
     }
     
     div[data-testid="stTextArea"] textarea:focus {
-        border-color: #00897b;
+        border-color: #1488DB;
         box-shadow: 0 0 0 2px rgba(0, 137, 123, 0.2);
     }
     
@@ -147,7 +131,7 @@
     }
     
     div[data-testid="stTextInput"] input:focus {
-        border-color: #00897b;
+        border-color: #1488DB;
         box-shadow: 0 0 0 2px rgba(0, 137, 123, 0.2);
     }
     
@@ -178,7 +162,7 @@
 
 /* Button styles that work in both modes */
 .stButton > button {
-    background: linear-gradient(135deg, #00897b 0%, #004d40 100%);
+    background: linear-gradient(135deg, #1488DB 0%, #006DCC 100%);
     color: white;
     border: none;
     padding: 0.5rem 2rem;
@@ -196,7 +180,7 @@
 
 /* Success message styling */
 .success-toast {
-    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    background: linear-gradient(135deg, #11998E 0%, #38EF7D 100%);
     color: white;
     padding: 1rem 2rem;
     border-radius: 50px;

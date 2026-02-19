@@ -6,7 +6,6 @@ from ui_components import show_grade
 
 
 def web():
-    # Enhanced page configuration with custom theme
     st.set_page_config(
         page_title="GPA Calculator HCMUT", 
         page_icon="🌠", 
@@ -14,12 +13,10 @@ def web():
         initial_sidebar_state="expanded"
     )
     
-    # Load CSS from separate file
     with open("styles.css", "r") as f:
         css_content = f.read()
         st.markdown(f"<style>{css_content}</style>", unsafe_allow_html=True)
 
-    # Impressive header with gradient
     st.markdown("""
     <div class="main-header">
         <h1 style="margin: 0; font-size: 3rem; font-weight: bold;">🎓 GPA Calculator HCMUT</h1>
@@ -29,7 +26,6 @@ def web():
     </div>
     """, unsafe_allow_html=True)
 
-    # Feature cards
     col1, col2 = st.columns(2)
     with col1:
         st.markdown("""
@@ -52,7 +48,7 @@ def web():
     st.markdown(f"""
     <div style="text-align: center; margin: 2rem 0;">
         <a href="{transcript_url}" target="_blank" 
-           style="background: linear-gradient(135deg, #00897b 0%, #004d40 100%); 
+           style="background: #006DCC; 
                   color: white; padding: 1rem 2rem; text-decoration: none; 
                   border-radius: 25px; font-weight: bold; display: inline-block;
                   box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.3s ease;"
@@ -129,14 +125,12 @@ def web():
                     show_grade(st.session_state.has_grade, st.session_state.summary, st.session_state.semester_grade_list, st.session_state.free_credit)
 
     st.markdown("""
-    <div class="footer">
-        <p style="margin: 0.5rem 0 0 0; opacity: 0.7; font-size: 0.9rem;">
-            © 2025 <a href="https://github.com/ngmikhoi" target="_blank" 
-                           style="color: #38ef7d; text-decoration: none; font-weight: bold;">
+        <p style="margin: 0.5rem 0 0 0; opacity: 0.8; font-size: 0.9rem;">
+            Copyright © 2026 <a href="https://github.com/ngmikhoi" target="_blank" 
+                           style="color: #3C8DBC; text-decoration: none; font-weight: bold;">
                 ngmikhoi
             </a>. All rights reserved.
         </p>
-    </div>
     """, unsafe_allow_html=True)
 
 
