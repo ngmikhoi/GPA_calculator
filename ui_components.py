@@ -73,6 +73,7 @@ def show_grade(has_grade, summary, semester_grade_list, free_credit):
 
     with tab3:
         st.subheader("Edit Academic Transcript")
+        st.write("Note: The recalculated GPA is based on the edited grades. Please make sure to input valid grades (0-10) for accurate calculation.")
         edited_df = st.data_editor(has_grade.loc[:, ["Course", "Course Name", "Grade_10", "Credit"]], num_rows="dynamic")
         
         if st.button("Recalculate GPA", key="recalculate_overall"):
@@ -99,10 +100,8 @@ def show_grade(has_grade, summary, semester_grade_list, free_credit):
             
             st.toast("GPA recalculated successfully!", icon="✅")
             
-            st.write("Note: The recalculated GPA is based on the edited grades. Please make sure to input valid grades (0-10) for accurate calculation.")
-            st.write("Not including free credits and courses without valid grades in the recalculation.")
-            
             overall_performance(new_summary)
+            st.write("Note: Not including free credits and courses without valid grades in the recalculation.")
 
             st.subheader("Updated Academic Transcript")
             display_df = valid_grades.copy()
@@ -113,6 +112,7 @@ def show_grade(has_grade, summary, semester_grade_list, free_credit):
             display_df["Priority"] = display_df["Priority"].astype(float)
             display_df["Priority_10"] = (display_df["Credit"] * (10 - display_df["Grade_10"])).round(2)
             display_df["Priority_10"] = display_df["Priority_10"].astype(float)
+            
             display_df = display_df.sort_values(["Priority", "Priority_10"], ascending=False, ignore_index=True)
             display_df.index += 1
             
