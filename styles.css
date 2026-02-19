@@ -121,9 +121,6 @@
         box-shadow: 0 0 0 2px rgba(0, 137, 123, 0.2);
     }
     
-    .footer {
-        background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
-    }
     
     /* Form styling in dark mode */
     div[data-testid="stForm"] {
