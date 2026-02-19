@@ -53,6 +53,14 @@ def semester_performance(semester_grade_list, free_credit):
 
 
 def show_grade(has_grade, summary, semester_grade_list, free_credit):
+    has_grade["Priority"] = (has_grade["Credit"] * (4 - has_grade["Grade_4"])).round(2)
+    has_grade["Priority"] = has_grade["Priority"].astype(float)
+    has_grade["Priority_10"] = (has_grade["Credit"] * (10 - has_grade["Grade_10"])).round(2)
+    has_grade["Priority_10"] = has_grade["Priority_10"].astype(float)
+
+    has_grade = has_grade.sort_values(["Priority", "Priority_10"], ascending=False, ignore_index=True)
+    has_grade.index += 1
+    
     tab1, tab2, tab3 = st.tabs(["Overall GPA", "Semester GPA", "Predict GPA"])
         
     with tab1:
