@@ -68,37 +68,30 @@ def show_grade(has_grade, summary, semester_grade_list, free_credit):
         edited_df = st.data_editor(has_grade.loc[:, ["Course", "Course Name", "Grade_10", "Credit"]], num_rows="dynamic")
         
         if st.button("Recalculate GPA", key="recalculate_overall"):
-            if not edited_df.empty:
-                map_grade_4 = {'A+': 4, 'A': 4, 'B+': 3.5, 'B': 3, 'C+': 2.5, 'C': 2, 'D+': 1.5, 'D': 1}
-                
-                edited_df["Grade_4"] = edited_df["Grade_10"].apply(convert_10_to_4)
-                edited_df["Grade"] = edited_df["Grade_10"].apply(convert_10_to_A)
+            map_grade_4 = {'A+': 4, 'A': 4, 'B+': 3.5, 'B': 3, 'C+': 2.5, 'C': 2, 'D+': 1.5, 'D': 1}
+            
+            edited_df["Grade"] = edited_df["Grade_10"].apply(convert_10_to_A)
+            edited_df["Grade_4"] = edited_df["Grade_10"].apply(convert_10_to_4)
 
-                valid_grades = edited_df[edited_df["Grade_4"].isin(map_grade_4.values())]
-                
-                if not valid_grades.empty:
-                    total_credit = valid_grades["Credit"].sum()
-                    total_grade = (valid_grades["Grade_4"] * valid_grades["Credit"]).sum()
-                    average_grade = total_grade / total_credit if total_credit else 0
-                    
-                    total_grade_10 = (valid_grades["Grade_10"] * valid_grades["Credit"]).sum()
-                    average_grade_10 = total_grade_10 / total_credit if total_credit else 0
-                    
-                    new_summary = {}
-                    new_summary["Total credits:"] = total_credit
-                    new_summary["Total grade 4:"] = total_grade
-                    new_summary["GPA scale of 4:"] = average_grade
-                    new_summary["Total grade 10:"] = total_grade_10
-                    new_summary["GPA scale of 10:"] = average_grade_10
-                    
-                    st.toast("GPA recalculated successfully!", icon="✅")
-                    overall_performance(new_summary)
+            valid_grades = edited_df[edited_df["Grade_4"].isin(map_grade_4.values())]
+            
+            total_credit = valid_grades["Credit"].sum()
+            total_grade = (valid_grades["Grade_4"] * valid_grades["Credit"]).sum()
+            average_grade = total_grade / total_credit if total_credit else 0
+            
+            total_grade_10 = (valid_grades["Grade_10"] * valid_grades["Credit"]).sum()
+            average_grade_10 = total_grade_10 / total_credit if total_credit else 0
+            
+            new_summary = {}
+            new_summary["Total credits:"] = total_credit
+            new_summary["Total grade 4:"] = total_grade
+            new_summary["GPA scale of 4:"] = average_grade
+            new_summary["Total grade 10:"] = total_grade_10
+            new_summary["GPA scale of 10:"] = average_grade_10
+            
+            st.toast("GPA recalculated successfully!", icon="✅")
+            overall_performance(new_summary)
 
-                    st.subheader("Updated Academic Transcript")
-                    display_df = edited_df.copy()
-                    display_df["Grade_4"] = display_df["Grade_4"].round(2)
-                    st.dataframe(display_df.loc[:, ["Course", "Course Name", "Grade", "Grade_4", "Grade_10", "Credit"]])
-                else:
-                    st.error("No valid grades found for calculation!")
-            else:
-                st.error("No data available for calculation!")
+            st.subheader("Updated Academic Transcript")
+            display_df = valid_grades.copy()
+            st.dataframe(display_df.loc[:, ["Course", "Course Name", "Grade", "Grade_4", "Grade_10", "Credit"]])
