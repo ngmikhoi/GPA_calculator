@@ -1,0 +1,213 @@
+/* GPA Calculator HCMUT - Professional Deep Teal Theme */
+
+/* Light mode styles */
+.main-header {
+    background: linear-gradient(135deg, #00897b 0%, #004d40 100%);
+    padding: 2rem;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    text-align: center;
+    color: white;
+}
+
+.feature-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin: 1rem;
+    border-left: 4px solid #00897b;
+}
+
+.metric-card {
+    background: linear-gradient(135deg, #0097A7 0%, #00646F 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-5px);
+}
+
+.tab-container {
+    background: white;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-top: 1rem;
+    border: 1px solid #e1e5e9;
+}
+
+.data-editor {
+    border: 2px solid #e1e5e9;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.footer {
+    background: linear-gradient(135deg, #00897b 0%, #004d40 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    text-align: center;
+    margin-top: 3rem;
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+    .main-header {
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    
+    .feature-card {
+        background: #2d3748;
+        color: #e2e8f0;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        border-left: 4px solid #00897b;
+    }
+    
+    .feature-card h3 {
+        color: #e2e8f0;
+    }
+    
+    .metric-card {
+        background: linear-gradient(135deg, #805ad5 0%, #d53f8c 100%);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    }
+    
+    .tab-container {
+        background: #1a202c;
+        border: 1px solid #4a5568;
+    }
+    
+    .data-editor {
+        border: 2px solid #4a5568;
+        background: #2d3748;
+    }
+    
+    .data-editor div[data-testid="stDataFrame"] {
+        background: #2d3748;
+        color: #e2e8f0;
+    }
+    
+    .data-editor div[data-testid="stDataFrame"] table {
+        background: #2d3748;
+        color: #e2e8f0;
+    }
+    
+    .data-editor div[data-testid="stDataFrame"] th {
+        background: #4a5568;
+        color: #e2e8f0;
+    }
+    
+    .data-editor div[data-testid="stDataFrame"] td {
+        background: #2d3748;
+        color: #e2e8f0;
+        border-color: #4a5568;
+    }
+    
+    .data-editor div[data-testid="stDataFrame"] input {
+        background: #4a5568;
+        color: #e2e8f0;
+        border-color: #718096;
+    }
+    
+    .data-editor div[data-testid="stDataFrame"] input:focus {
+        border-color: #00897b;
+        box-shadow: 0 0 0 2px rgba(0, 137, 123, 0.2);
+    }
+    
+    .footer {
+        background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    }
+    
+    /* Form styling in dark mode */
+    div[data-testid="stForm"] {
+        background: #2d3748;
+        border-radius: 10px;
+        padding: 1rem;
+    }
+    
+    div[data-testid="stTextArea"] textarea {
+        background: #4a5568;
+        color: #e2e8f0;
+        border-color: #718096;
+    }
+    
+    div[data-testid="stTextArea"] textarea:focus {
+        border-color: #00897b;
+        box-shadow: 0 0 0 2px rgba(0, 137, 123, 0.2);
+    }
+    
+    div[data-testid="stTextInput"] input {
+        background: #4a5568;
+        color: #e2e8f0;
+        border-color: #718096;
+    }
+    
+    div[data-testid="stTextInput"] input:focus {
+        border-color: #00897b;
+        box-shadow: 0 0 0 2px rgba(0, 137, 123, 0.2);
+    }
+    
+    /* Instruction box dark mode */
+    .instruction-box {
+        background: #2d3748 !important;
+        color: #e2e8f0 !important;
+    }
+    
+    .instruction-box h3 {
+        color: #e2e8f0 !important;
+    }
+    
+    .instruction-box p {
+        color: #a0aec0 !important;
+    }
+    
+    .instruction-box strong {
+        color: #e2e8f0 !important;
+    }
+    
+    .instruction-box kbd {
+        background: #4a5568 !important;
+        color: #e2e8f0 !important;
+        border: 1px solid #718096 !important;
+    }
+}
+
+/* Button styles that work in both modes */
+.stButton > button {
+    background: linear-gradient(135deg, #00897b 0%, #004d40 100%);
+    color: white;
+    border: none;
+    padding: 0.5rem 2rem;
+    border-radius: 25px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.stButton > button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+
+/* Success message styling */
+.success-toast {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-weight: bold;
+    animation: slideIn 0.5s ease;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(-100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
