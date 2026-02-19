@@ -163,25 +163,31 @@ def calculate_grade(is_driver, clipped, transcript_url, username, password):
     return None, None, None, None
 
 
-def convert_10_to_4(grade_10):
+def convert_10_to_A(grade_10):
     if not isinstance(grade_10, (int, float)):
         return None
     elif grade_10 < 0 or grade_10 > 10:
         return None
+    elif grade_10 >= 9.5:
+        return "A+"
     elif grade_10 >= 8.5:
-        return 4
+        return "A"
     elif grade_10 >= 8:
-        return 3.5
+        return "B+"
     elif grade_10 >= 7:
-        return 3
+        return "B"
     elif grade_10 >= 6.5:
-        return 2.5
+        return "C+"
     elif grade_10 >= 6:
-        return 2
+        return "C"
     elif grade_10 >= 5:
-        return 1.5
+        return "D+"
     elif grade_10 >= 4:
-        return 1
+        return "D"
     else:
-        return 0
+        return "F"
 
+
+def convert_10_to_4(grade_10):
+    map_grade_to_4 = {'A+': 4, 'A': 4, 'B+': 3.5, 'B': 3, 'C+': 2.5, 'C': 2, 'D+': 1.5, 'D': 1, 'F': 0}
+    return map_grade_to_4.get(convert_10_to_A(grade_10), None)

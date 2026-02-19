@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from utils import convert_10_to_4
+from utils import convert_10_to_4, convert_10_to_A
 
 
 def overall_performance(summary):
@@ -72,6 +72,7 @@ def show_grade(has_grade, summary, semester_grade_list, free_credit):
                 map_grade_4 = {'A+': 4, 'A': 4, 'B+': 3.5, 'B': 3, 'C+': 2.5, 'C': 2, 'D+': 1.5, 'D': 1}
                 
                 edited_df["Grade_4"] = edited_df["Grade_10"].apply(convert_10_to_4)
+                edited_df["Grade"] = edited_df["Grade_10"].apply(convert_10_to_A)
 
                 valid_grades = edited_df[edited_df["Grade_4"].isin(map_grade_4.values())]
                 
@@ -92,6 +93,11 @@ def show_grade(has_grade, summary, semester_grade_list, free_credit):
                     
                     st.toast("GPA recalculated successfully!", icon="✅")
                     overall_performance(new_summary)
+
+                    st.subheader("Updated Academic Transcript")
+                    display_df = edited_df.copy()
+                    display_df["Grade_4"] = display_df["Grade_4"].round(2)
+                    st.dataframe(display_df.loc[:, ["Course", "Course Name", "Grade", "Grade_4", "Grade_10", "Credit"]])
                 else:
                     st.error("No valid grades found for calculation!")
             else:

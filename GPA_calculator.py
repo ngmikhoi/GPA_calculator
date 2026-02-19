@@ -68,7 +68,7 @@ def web():
     with st.form("Academic Transcript to GPA"):
         st.markdown("""
         <div class="instruction-box" style="background: #f8f9fa; padding: 2rem; border-radius: 10px; margin: 2rem 0;">
-            <h3 style="text-align: center; color: #2c3e50; margin-bottom: 1.5rem;">
+            <h3 style="text-align: center; color: #2c3e50; margin-bottom: 0.5rem;">
                 Input Your Academic Data 
             </h3>
             <p style="text-align: center; color: #7f8c8d; line-height: 1.6;">
@@ -81,9 +81,9 @@ def web():
         """, unsafe_allow_html=True)
         
         clipped = st.text_area("", 
-                           placeholder="Paste your academic transcript data here...",
-                           height=200,
-                           help="Copy and paste your complete academic transcript from myBK")
+            placeholder="Paste your academic transcript data here...",
+            height=200,
+            help="Copy and paste your complete academic transcript from mybk")
 
         submitted = st.form_submit_button("🚀 Calculate GPA!", 
                                      use_container_width=True)
@@ -107,17 +107,17 @@ def web():
         col1, col2 = st.columns(2)
         with col1:
             username = st.text_input("👤 Username", 
-                                placeholder="Enter your mybk username",
-                                help="Your mybk student account username")
+                placeholder="Enter your mybk username",
+                help="Your mybk student account username")
         with col2:
             password = st.text_input("🔒 Password", 
-                                type="password",
-                                placeholder="Enter your mybk password",
-                                help="Your mybk student account password")
+                type="password",
+                placeholder="Enter your mybk password",
+                help="Your mybk student account password")
 
         button_clicked = st.button("🚀 Auto-Login & Calculate GPA!", 
-                               use_container_width=True,
-                               help="Automatically login and fetch your academic data")
+            use_container_width=True,
+            help="Automatically login and fetch your academic data")
         if button_clicked:
             with st.spinner("🔄 Logging in and fetching data..."):
                 st.session_state.has_grade, st.session_state.summary, st.session_state.semester_grade_list, st.session_state.free_credit = calculate_grade(True, None, transcript_url, username, password)
