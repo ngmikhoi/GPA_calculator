@@ -94,4 +94,13 @@ def show_grade(has_grade, summary, semester_grade_list, free_credit):
 
             st.subheader("Updated Academic Transcript")
             display_df = valid_grades.copy()
-            st.dataframe(display_df.loc[:, ["Course", "Course Name", "Grade", "Grade_4", "Grade_10", "Credit"]])
+            
+            st.write("Sorting by Priority (= Credit * (4 - Grade_4)), higher priority means higher potential improvement")
+
+            display_df["Priority"] = (display_df["Credit"] * (4 - display_df["Grade_4"])).round(2)
+            display_df["Priority_10"] = (display_df["Credit"] * (10 - display_df["Grade_10"])).round(2)
+
+            display_df = display_df.sort_values(["Priority", "Priority_10"], ascending=False, ignore_index=True)
+            display_df.index += 1
+            
+            st.dataframe(display_df.loc[:, ["Priority", "Course", "Course Name", "Grade", "Grade_4", "Grade_10", "Credit"]])
