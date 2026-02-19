@@ -98,6 +98,10 @@ def show_grade(has_grade, summary, semester_grade_list, free_credit):
             new_summary["GPA scale of 10:"] = average_grade_10
             
             st.toast("GPA recalculated successfully!", icon="✅")
+            
+            st.write("Note: The recalculated GPA is based on the edited grades. Please make sure to input valid grades (0-10) for accurate calculation.")
+            st.write("Not including free credits and courses without valid grades in the recalculation.")
+            
             overall_performance(new_summary)
 
             st.subheader("Updated Academic Transcript")
@@ -109,7 +113,6 @@ def show_grade(has_grade, summary, semester_grade_list, free_credit):
             display_df["Priority"] = display_df["Priority"].astype(float)
             display_df["Priority_10"] = (display_df["Credit"] * (10 - display_df["Grade_10"])).round(2)
             display_df["Priority_10"] = display_df["Priority_10"].astype(float)
-
             display_df = display_df.sort_values(["Priority", "Priority_10"], ascending=False, ignore_index=True)
             display_df.index += 1
             
