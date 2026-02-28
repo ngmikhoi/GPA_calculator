@@ -25,11 +25,7 @@ def web():
         unsafe_allow_html=True
     )
     
-    HtmlFile = open("test.html", 'r', encoding='utf-8')
-    source_code = HtmlFile.read()
-    print(source_code)
-    import streamlit.components.v1 as components
-    components.html(source_code, height=600)
+    
     
     with open("styles.css", "r") as f:
         css_content = f.read()
@@ -142,6 +138,12 @@ def web():
                 if st.session_state.has_grade is not None:                
                     show_grade(st.session_state.has_grade, st.session_state.summary, st.session_state.semester_grade_list, st.session_state.free_credit)
 
+    HtmlFile = open("test.html", 'r', encoding='utf-8')
+    source_code = HtmlFile.read()
+    print(source_code)
+    import streamlit.components.v1 as components
+    components.html(source_code)
+    
     st.markdown("""
     <div style="display: flex; justify-content: space-between; align-items: center; 
         margin-top: 3rem; bottom: 0; left: 0; right: 0;
@@ -162,6 +164,8 @@ def web():
         </div>
     </div>
     """, unsafe_allow_html=True)
+    
+    
 
 
 if __name__ == "__main__":    
