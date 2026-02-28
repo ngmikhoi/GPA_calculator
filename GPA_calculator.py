@@ -144,6 +144,14 @@ def web():
     import streamlit.components.v1 as components
     components.html(source_code)
     
+    st.html("""
+            <head>
+                <meta name="google-adsense-account" content="ca-pub-1713680280109816">
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1713680280109816"
+                crossorigin="anonymous"></script>
+            </head>
+            """, unsafe_allow_javascript=True)
+    
     st.markdown("""
     <div style="display: flex; justify-content: space-between; align-items: center; 
         margin-top: 3rem; bottom: 0; left: 0; right: 0;
