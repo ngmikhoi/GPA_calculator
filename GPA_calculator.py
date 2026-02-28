@@ -13,6 +13,16 @@ def web():
         initial_sidebar_state="expanded"
     )
     
+    st.markdown(
+        '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1713680280109816" crossorigin="anonymous"></script>',
+        unsafe_allow_html=True
+    )
+    
+    st.markdown(
+        '<meta name="google-adsense-account" content="ca-pub-1713680280109816">',
+        unsafe_allow_html=True
+    )
+    
     with open("styles.css", "r") as f:
         css_content = f.read()
         st.markdown(f"<style>{css_content}</style>", unsafe_allow_html=True)
