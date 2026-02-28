@@ -1,3 +1,5 @@
+import os
+
 import streamlit as st
 import pandas as pd
 from streamlit_javascript import st_javascript
@@ -22,6 +24,24 @@ def web():
         '<meta name="google-adsense-account" content="ca-pub-1713680280109816">',
         unsafe_allow_html=True
     )
+    
+    code = """<!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1713680280109816"
+     crossorigin="anonymous"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-XXXXXXXXX');
+    </script>"""
+
+    a=os.path.dirname(st.__file__)+'/static/index.html'
+    with open(a, 'r') as f:
+        data=f.read()
+        if len(re.findall('UA-', data))==0:
+            with open(a, 'w') as ff:
+                newdata=re.sub('<head>','<head>'+code,data)
+                ff.write(newdata)
     
     with open("styles.css", "r") as f:
         css_content = f.read()
