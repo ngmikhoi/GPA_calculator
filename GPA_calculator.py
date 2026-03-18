@@ -135,8 +135,8 @@ def web():
             with st.spinner("🔄 Logging in and fetching data..."):
                 st.session_state.has_grade, st.session_state.summary, st.session_state.semester_grade_list, st.session_state.free_credit = calculate_grade(True, None, transcript_url, username, password)
             
-        if st.session_state.has_grade is not None:
-            show_grade(st.session_state.has_grade, st.session_state.summary, st.session_state.semester_grade_list, st.session_state.free_credit)
+    if st.session_state.has_grade is not None:
+        show_grade(st.session_state.has_grade, st.session_state.summary, st.session_state.semester_grade_list, st.session_state.free_credit)
     
     st.markdown("""
     <div style="display: flex; justify-content: space-between; align-items: center; 
