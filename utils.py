@@ -124,7 +124,7 @@ def calculate_grade(is_driver, clipped, transcript_url, username, password):
                 "Cumulative GPA scale of 10": cumulative_average_grade_10,
             })
 
-    if "myBk/app" in clipped:
+    if "Mã môn" in clipped:
         df = clipped_to_df(is_driver, clipped)
         df = df.rename(columns={df.columns[1]: "Course", df.columns[2]: "Course Name", df.columns[5]: "Credit", df.columns[3]: "Grade_10", df.columns[4]: "Grade"})
         map_grade_4 = {'A+': 4, 'A': 4, 'B+': 3.5, 'B': 3, 'C+': 2.5, 'C': 2, 'D+': 1.5, 'D': 1}

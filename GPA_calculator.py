@@ -4,7 +4,7 @@ import streamlit as st
 import pandas as pd
 from streamlit_javascript import st_javascript
 from utils import calculate_grade
-from ui_components import show_grade
+from components import show_grade
 
 
 def web():
@@ -106,8 +106,7 @@ def web():
                 st.session_state.has_grade, st.session_state.summary, st.session_state.semester_grade_list, st.session_state.free_credit = calculate_grade(False, clipped, None, None, None)
 
 
-    if st.session_state.has_grade is not None:
-        show_grade(st.session_state.has_grade, st.session_state.summary, st.session_state.semester_grade_list, st.session_state.free_credit)
+    
     
     url = st_javascript("await fetch('').then(r => window.parent.location.href)")
     if (url == "http://localhost:8501/"):
@@ -135,22 +134,9 @@ def web():
         if button_clicked:
             with st.spinner("🔄 Logging in and fetching data..."):
                 st.session_state.has_grade, st.session_state.summary, st.session_state.semester_grade_list, st.session_state.free_credit = calculate_grade(True, None, transcript_url, username, password)
-                if st.session_state.has_grade is not None:                
-                    show_grade(st.session_state.has_grade, st.session_state.summary, st.session_state.semester_grade_list, st.session_state.free_credit)
-
-    HtmlFile = open("test.html", 'r', encoding='utf-8')
-    source_code = HtmlFile.read()
-    print(source_code)
-    import streamlit.components.v1 as components
-    components.html(source_code)
-    
-    st.html("""
-            <head>
-                <meta name="google-adsense-account" content="ca-pub-1713680280109816">
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1713680280109816"
-                crossorigin="anonymous"></script>
-            </head>
-            """, unsafe_allow_javascript=True)
+            
+        if st.session_state.has_grade is not None:
+            show_grade(st.session_state.has_grade, st.session_state.summary, st.session_state.semester_grade_list, st.session_state.free_credit)
     
     st.markdown("""
     <div style="display: flex; justify-content: space-between; align-items: center; 
