@@ -10,7 +10,7 @@ from components import show_grade
 def web():
     st.set_page_config(
         page_title="GPA Calculator HCMUT", 
-        page_icon="🌠", 
+        page_icon="https://img.icons8.com/fluency/48/calculator.png", 
         layout="wide",
         initial_sidebar_state="expanded"
     )
@@ -33,7 +33,7 @@ def web():
 
     st.markdown("""
     <div class="main-header">
-        <h1 style="margin: 0; font-size: 3rem; font-weight: bold;">🎓 GPA Calculator HCMUT</h1>
+        <h1 style="margin: 0; font-size: 3rem; font-weight: bold;"><i class="fa-solid fa-graduation-cap"></i> GPA Calculator HCMUT</h1>
         <p style="margin: 0; font-size: 1rem; opacity: 0.8;">
             Empowering HCMUT students with intelligent grade analysis
         </p>
@@ -44,7 +44,7 @@ def web():
     with col1:
         st.markdown("""
         <div class="feature-card">
-            <h3>📋 Smart Analytics</h3>
+            <h3><i class="fa-solid fa-chart-column"></i> Smart Analytics</h3>
             <p>GPA calculation with detailed breakdown by semester and overall performance metrics.</p>
         </div>
         """, unsafe_allow_html=True)
@@ -52,7 +52,7 @@ def web():
     with col2:
         st.markdown("""
         <div class="feature-card">
-            <h3>✏️ Interactive Editing</h3>
+            <h3><i class="fa-solid fa-pen-to-square"></i> Interactive Editing</h3>
             <p>Edit grades and predict future GPA scenarios with instant recalculation.</p>
         </div>
         """, unsafe_allow_html=True)
@@ -68,7 +68,7 @@ def web():
                   box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.3s ease;"
            onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.3)'"
            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.2)'">
-            🔗 Go to Academic Transcript
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Go to Academic Transcript
         </a>
     </div>
     """, unsafe_allow_html=True)
@@ -99,10 +99,10 @@ def web():
             height=200,
             help="Copy and paste your complete academic transcript from mybk")
 
-        submitted = st.form_submit_button("🚀 Calculate GPA!", 
+        submitted = st.form_submit_button("Calculate GPA!", 
                                      use_container_width=True)
         if submitted:
-            with st.spinner("🔄 Processing your academic data..."):
+            with st.spinner("Processing your academic data..."):
                 st.session_state.has_grade, st.session_state.summary, st.session_state.semester_grade_list, st.session_state.free_credit = calculate_grade(False, clipped, None, None, None)
 
 
@@ -112,27 +112,31 @@ def web():
     if (url == "http://localhost:8501/"):
         st.markdown("""
         <div class="feature-card">
-            <h3>🔐 Quick Login Access</h3>
+            <h3><i class="fa-solid fa-shield-halved"></i> Quick Login Access</h3>
             <p>Enter your credentials for automatic data retrieval</p>
         </div>
         """, unsafe_allow_html=True)
 
         col1, col2 = st.columns(2)
         with col1:
-            username = st.text_input("👤 Username", 
+            st.markdown('<div class="input-label"><i class="fa-solid fa-user"></i> Username</div>', unsafe_allow_html=True)
+            username = st.text_input("Username", 
+                label_visibility="collapsed",
                 placeholder="Enter your mybk username",
                 help="Your mybk student account username")
         with col2:
-            password = st.text_input("🔒 Password", 
+            st.markdown('<div class="input-label"><i class="fa-solid fa-key"></i> Password</div>', unsafe_allow_html=True)
+            password = st.text_input("Password", 
                 type="password",
+                label_visibility="collapsed",
                 placeholder="Enter your mybk password",
                 help="Your mybk student account password")
 
-        button_clicked = st.button("🚀 Auto-Login & Calculate GPA!", 
+        button_clicked = st.button("Auto-Login & Calculate GPA!", 
             use_container_width=True,
             help="Automatically login and fetch your academic data")
         if button_clicked:
-            with st.spinner("🔄 Logging in and fetching data..."):
+            with st.spinner("Logging in and fetching data..."):
                 st.session_state.has_grade, st.session_state.summary, st.session_state.semester_grade_list, st.session_state.free_credit = calculate_grade(True, None, transcript_url, username, password)
             
     if st.session_state.has_grade is not None:

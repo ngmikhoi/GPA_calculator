@@ -98,7 +98,7 @@ def show_grade(has_grade, summary, semester_grade_list, free_credit):
             new_summary["Total grade 10:"] = total_grade_10
             new_summary["GPA scale of 10:"] = average_grade_10
             
-            st.toast("GPA recalculated successfully!", icon="✅")
+            st.toast("GPA recalculated successfully!")
             
             overall_performance(new_summary)
             st.write("Note: Not including free credits and courses without valid grades in the recalculation.")

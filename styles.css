@@ -1,4 +1,33 @@
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css");
+
 /* GPA Calculator HCMUT - Professional Deep Teal Theme */
+
+/* Custom input label styling with FontAwesome icons */
+.input-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+    .input-label {
+        color: #e2e8f0;
+    }
+}
+
+/* Add rocket icon to the submit and login buttons */
+div[data-testid="stFormSubmitButton"] button::before,
+div[data-testid="stForm"] + div .stButton button::before,
+.stButton button[data-testid="stBaseButton-secondary"]::before {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    content: "\f135"; /* rocket icon */
+    margin-right: 8px;
+}
 
 /* Light mode styles */
 .main-header {
