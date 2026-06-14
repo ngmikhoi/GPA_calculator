@@ -27,6 +27,24 @@ div[data-testid="stForm"] + div .stButton button::before,
     font-weight: 900;
     content: "\f135"; /* rocket icon */
     margin-right: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Ensure the button and its children align content in the center */
+div[data-testid="stFormSubmitButton"] button,
+.stButton button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+div[data-testid="stFormSubmitButton"] button *,
+.stButton button * {
+    width: auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
 }
 
 /* Light mode styles */

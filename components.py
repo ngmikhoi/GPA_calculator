@@ -12,7 +12,7 @@ def overall_performance(summary):
         """ )
     with col2:
         st.markdown(f"""
-            {list(summary.keys())[2]} {round(list(summary.values())[2], 7)} ≈ {round(list(summary.values())[2], 1)}     
+            {list(summary.keys())[2]} {round(list(summary.values())[2], 7)} ≈ {round(list(summary.values())[2], 2)}     
         """ )
     with col3:
         st.markdown(f"""
@@ -37,10 +37,10 @@ def semester_performance(semester_grade_list, free_credit):
             """ )
         with col2:
             st.markdown(f"""
-                GPA scale of 4: {round(semester_grade_list[i]['GPA scale of 4'], 7)} ≈ {round(semester_grade_list[i]['GPA scale of 4'], 1)}
+                GPA scale of 4: {round(semester_grade_list[i]['GPA scale of 4'], 7)} ≈ {round(semester_grade_list[i]['GPA scale of 4'], 2)}
             """ )
             st.markdown(f"""
-                Cumulative GPA scale of 4: {round(semester_grade_list[i]['Cumulative GPA scale of 4'], 7)} ≈ {round(semester_grade_list[i]['Cumulative GPA scale of 4'], 1)}
+                Cumulative GPA scale of 4: {round(semester_grade_list[i]['Cumulative GPA scale of 4'], 7)} ≈ {round(semester_grade_list[i]['Cumulative GPA scale of 4'], 2)}
             """ )
         with col3:
             st.markdown(f"""
