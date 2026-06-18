@@ -58,7 +58,7 @@ def web():
         """, unsafe_allow_html=True)
 
 
-    transcript_url = "https://mybk.hcmut.edu.vn/app/sinh-vien/ket-qua-hoc-tap/chuong-trinh-dao-tao"
+    transcript_url = "https://mybk.hcmut.edu.vn/app/sinh-vien/ket-qua-hoc-tap/bang-diem-mon-hoc"
     st.markdown(f"""
     <div style="text-align: center; margin: 2rem 0;">
         <a href="{transcript_url}" target="_blank" 
